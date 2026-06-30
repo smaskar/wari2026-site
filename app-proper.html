@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="mr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>वारी सहाय्य</title>
+  <style>
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f3ead8}
+    iframe{display:block;border:0;width:100%;height:100dvh;min-height:100vh}
+  </style>
+</head>
+<body>
+  <iframe id="core" src="./app.html" title="वारी सहाय्य" allow="geolocation; clipboard-write; web-share"></iframe>
+  <script>
+    var core=document.getElementById('core');
+    var replacements=[
+      ['संत ज्ञानेश्वर महाराज पालखी','श्री संत ज्ञानेश्वर महाराज पालखी'],
+      ['संत तुकाराम महाराज पालखी','जगद्गुरू श्री संत तुकाराम महाराज पालखी'],
+      ['ज्ञानेश्वर माऊली','श्री संत ज्ञानेश्वर महाराज'],
+      ['तुकाराम महाराज','जगद्गुरू श्री संत तुकाराम महाराज']
+    ];
+    function replaceTextInDoc(doc){
+      if(!doc || !doc.body) return;
+      if(!doc.getElementById('proper-name-style')){
+        var style=doc.createElement('style');
+        style.id='proper-name-style';
+        style.textContent='.tab{white-space:normal!important;line-height:1.12!important;min-height:46px!important;font-size:10.5px!important}.badge{white-space:normal!important}.hero p{line-height:1.25!important}';
+        doc.head.appendChild(style);
+      }
+      var walker=doc.createTreeWalker(doc.body,NodeFilter.SHOW_TEXT);
+      var n;
+      while(n=walker.nextNode()){
+        var t=n.nodeValue;
+        replacements.forEach(function(pair){t=t.split(pair[0]).join(pair[1]);});
+        if(t.trim()==='ज्ञानेश्वर') t='श्री संत ज्ञानेश्वर महाराज';
+        if(t.trim()==='तुकाराम') t='जगद्गुरू श्री संत तुकाराम महाराज';
+        n.nodeValue=t;
+      }
+    }
+    function applyProperNames(){
+      try{replaceTextInDoc(core.contentDocument || core.contentWindow.document);}catch(e){}
+    }
+    core.addEventListener('load',function(){applyProperNames();setInterval(applyProperNames,700);});
+    function callCore(fn){
+      try{
+        var w=core.contentWindow;
+        if(w && typeof w[fn]==='function') w[fn]();
+        setTimeout(applyProperNames,250);
+      }catch(e){}
+    }
+    window.locateMe=function(){callCore('locateMe')};
+    window.openMapPanel=function(){callCore('openMapPanel')};
+    window.showMappedArea=function(){callCore('showMappedArea')};
+  </script>
+</body>
+</html>
