@@ -16,15 +16,17 @@
     var properD='श्री संत ज्ञानेश्वर महाराज';
     var properT='जगद्गुरू श्री संत तुकाराम महाराज';
     function normalizeText(t){
-      return t
-        .replace(/(?:श्री संत )+ज्ञानेश्वर महाराज/g, properD)
-        .replace(/संत ज्ञानेश्वर महाराज/g, properD)
-        .replace(/ज्ञानेश्वर माऊली/g, properD)
-        .replace(/\bज्ञानेश्वर\b/g, properD)
-        .replace(/(?:(?:जगद्गुरू श्री संत )+तुकाराम महाराज)/g, properT)
-        .replace(/संत तुकाराम महाराज/g, properT)
-        .replace(/तुकाराम महाराज/g, properT)
-        .replace(/\bतुकाराम\b/g, properT);
+      if(!t) return t;
+      var D='__DNYANESHWAR_PALKHI_NAME__';
+      var T='__TUKARAM_PALKHI_NAME__';
+      t=t.replace(/(?:श्री\s+संत\s+)?ज्ञानेश्वर\s+महाराज/g,D);
+      t=t.replace(/ज्ञानेश्वर\s+माऊली/g,D);
+      t=t.replace(/ज्ञानेश्वर/g,D);
+      t=t.replace(/(?:(?:जगद्गुरू\s+श्री\s+)?(?:संत\s+)?तुकाराम\s+महाराज\s*)+/g,T);
+      t=t.replace(/तुकाराम/g,T);
+      t=t.replace(new RegExp('(?:'+D+'\\s*)+','g'),properD);
+      t=t.replace(new RegExp('(?:'+T+'\\s*)+','g'),properT);
+      return t;
     }
     function replaceTextInDoc(doc){
       if(!doc || !doc.body) return;
@@ -41,9 +43,7 @@
     function applyProperNames(){
       try{replaceTextInDoc(core.contentDocument || core.contentWindow.document);}catch(e){}
     }
-    core.addEventListener('load',function(){
-      applyProperNames();
-    });
+    core.addEventListener('load',function(){applyProperNames();});
     function callCore(fn){
       try{
         var w=core.contentWindow;
