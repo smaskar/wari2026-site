@@ -1,0 +1,99 @@
+const CACHE_VERSION = 'wari2026-v1';
+const APP_SHELL = [
+  './',
+  './index.html',
+  './app.html',
+  './offline.html',
+  './manifest.webmanifest',
+  './wari-points-1.js',
+  './wari-points-2.js',
+  './wari-points-3.js',
+  './wari-points-4.js',
+  './wari-points-5.js',
+  './wari-points-tukaram.js',
+  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
+];
+
+self.addEventListener('install', event => {
+  self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_VERSION).then(cache =>
+      Promise.allSettled(APP_SHELL.map(url => cache.add(url)))
+    )
+  );
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE_VERSION).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
+
+function isDataOrAppRequest(url) {
+  return url.pathname.endsWith('.html') ||
+    url.pathname.endsWith('.js') ||
+    url.pathname.endsWith('.css') ||
+    url.pathname.endsWith('.webmanifest') ||
+    url.pathname.includes('wari-points-');
+}
+
+async function staleWhileRevalidate(request) {
+  const cache = await caches.open(CACHE_VERSION);
+  const cached = await cache.match(request);
+  const networkPromise = fetch(request).then(response => {
+    if (response && (response.ok || response.type === 'opaque')) cache.put(request, response.clone());
+    return response;
+  }).catch(() => null);
+  return cached || await networkPromise || caches.match('./offline.html');
+}
+
+async function networkFirst(request) {
+  const cache = await caches.open(CACHE_VERSION);
+  try {
+    const response = await fetch(request);
+    if (response && (response.ok || response.type === 'opaque')) cache.put(request, response.clone());
+    return response;
+  } catch (e) {
+    return await cache.match(request) || await caches.match('./offline.html');
+  }
+}
+
+self.addEventListener('fetch', event => {
+  const request = event.request;
+  if (request.method !== 'GET') return;
+  const url = new URL(request.url);
+
+  if (request.mode === 'navigate') {
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  if (url.origin === location.origin && isDataOrAppRequest(url)) {
+    event.respondWith(staleWhileRevalidate(request));
+    return;
+  }
+
+  if (url.hostname === 'unpkg.com') {
+    event.respondWith(staleWhileRevalidate(request));
+    return;
+  }
+
+  // Map tiles: use cache when already seen, but do not force huge pre-cache.
+  if (url.hostname.includes('tile.openstreetmap.org')) {
+    event.respondWith(staleWhileRevalidate(request));
+  }
+});
+
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SYNC_NOW') {
+    event.waitUntil(
+      caches.open(CACHE_VERSION).then(cache =>
+        Promise.allSettled(APP_SHELL.map(url => fetch(url).then(r => {
+          if (r && (r.ok || r.type === 'opaque')) return cache.put(url, r.clone());
+        })))
+      )
+    );
+  }
+});
