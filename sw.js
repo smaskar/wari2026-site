@@ -1,8 +1,9 @@
-const CACHE_VERSION = 'wari2026-v2';
+const CACHE_VERSION = 'wari2026-v3';
 const APP_SHELL = [
   './',
   './index.html',
   './app.html',
+  './map.html',
   './offline.html',
   './manifest.webmanifest',
   './wari-points-1.js',
