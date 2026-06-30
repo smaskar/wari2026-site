@@ -13,11 +13,11 @@
   </style>
 </head>
 <body>
-  <iframe class="mobile-frame" src="./app.html?v=osm5" title="वारी सहाय्य" allow="geolocation; clipboard-write; web-share"></iframe>
+  <iframe class="mobile-frame" src="./app.html?v=osm6" title="वारी सहाय्य" allow="geolocation; clipboard-write; web-share"></iframe>
 
   <main class="desktop-shell">
     <section class="phone-wrap">
-      <iframe id="appFrame" src="./app.html?v=osm5" title="वारी सहाय्य मोबाइल UI" allow="geolocation; clipboard-write; web-share"></iframe>
+      <iframe id="appFrame" src="./app.html?v=osm6" title="वारी सहाय्य मोबाइल UI" allow="geolocation; clipboard-write; web-share"></iframe>
     </section>
     <section class="map-wrap">
       <div class="desktop-head">
@@ -29,11 +29,16 @@
         </div>
       </div>
       <!-- Google My Map is intentionally disabled for now. Kept for later reference: https://www.google.com/maps/d/u/0/embed?mid=1151dFIqz_htDjnDRMRnDqnJQE9JW3VQ -->
-      <iframe id="osmFrame" class="map-frame" src="./map.html?v=osm5" title="वारी सहाय्य OpenStreetMap" allow="geolocation; clipboard-write; web-share" loading="lazy"></iframe>
+      <iframe id="osmFrame" class="map-frame" src="./map.html?v=osm6" title="वारी सहाय्य OpenStreetMap" allow="geolocation; clipboard-write; web-share" loading="lazy"></iframe>
     </section>
   </main>
 
   <script>
+    function setDesktopPalkhi(p){
+      var m=document.getElementById('osmFrame');
+      if(m && m.contentWindow) m.contentWindow.postMessage({type:'PALKHI_FILTER',palkhi:p||'all'},'*');
+    }
+
     function injectExtraPoints(frame){
       try{
         var doc=frame.contentDocument || frame.contentWindow.document;
@@ -48,7 +53,7 @@
           doc.body.appendChild(sc);
           doc.body.dataset.extraWariPointsReady='yes';
         }
-        ['./wari-points-dnyaneshwar-halts.js?v=osm5','./wari-points-tukaram-halts.js?v=osm5','./wari-points-satara.js?v=osm5'].forEach(function(src){
+        ['./wari-points-dnyaneshwar-halts.js?v=osm6','./wari-points-tukaram-halts.js?v=osm6','./wari-points-satara.js?v=osm6'].forEach(function(src){
           var s=doc.createElement('script');
           s.src=src;
           s.onload=done;
@@ -58,8 +63,20 @@
       }catch(e){console.warn('Unable to inject extra Wari points', e);}
     }
 
+    function installPalkhiSync(frame){
+      try{
+        var doc=frame.contentDocument || frame.contentWindow.document;
+        if(!doc || !doc.body || doc.body.dataset.palkhiSyncReady==='yes') return;
+        doc.body.dataset.palkhiSyncReady='yes';
+        doc.addEventListener('click',function(e){
+          var tab=e.target.closest && e.target.closest('.tab');
+          if(tab && tab.dataset && tab.dataset.p){setDesktopPalkhi(tab.dataset.p);}
+        },true);
+      }catch(e){console.warn('Unable to sync palkhi tabs',e);}
+    }
+
     function installFrame(frame){
-      function run(){injectExtraPoints(frame);}
+      function run(){injectExtraPoints(frame);installPalkhiSync(frame);}
       frame.addEventListener('load',run);
       setTimeout(run,400);
       setTimeout(run,1600);
@@ -80,7 +97,7 @@
       document.querySelectorAll('iframe').forEach(function(frame){
         var src=frame.getAttribute('src')||'';
         if(src.indexOf('google.com/maps')>-1 || src.indexOf('maps/d/u')>-1){
-          frame.setAttribute('src','./map.html?v=osm5');
+          frame.setAttribute('src','./map.html?v=osm6');
           frame.setAttribute('title','वारी सहाय्य OpenStreetMap');
         }
       });
@@ -92,7 +109,7 @@
     function registerOfflineSupport(){
       if(!('serviceWorker' in navigator)) return;
       window.addEventListener('load', function(){
-        navigator.serviceWorker.register('./sw.js?v=osm5').then(function(reg){
+        navigator.serviceWorker.register('./sw.js?v=osm6').then(function(reg){
           function syncNow(){
             if(reg.update) reg.update();
             if(navigator.serviceWorker.controller){navigator.serviceWorker.controller.postMessage({type:'SYNC_NOW'});}
