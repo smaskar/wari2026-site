@@ -1,22 +1,34 @@
-Wari Help Map - Mobile Friendly UI Package
+Wari 2026 Static Site
 
-Files
-1. wari_help_map_public_mobile.html
-   - Public/mobile friendly map for Warkari/general public/Dindi heads.
-   - Uses only public-ready points: 29 points.
-   - Large buttons, nearest help, call, directions, share current location.
+This repository is a plain static web app for the Wari help map. It is designed
+to run on GitHub Pages or any simple HTTPS static host without a build step.
 
-2. wari_help_map_control_room_mobile.html
-   - Control room/admin version.
-   - Includes all available points: 56 points.
-   - Shows public-ready and verification-required points.
+Primary entry points
+- index.html: responsive shell. On desktop it shows the mobile app and full map
+  side by side; on mobile it loads the app full screen.
+- app.html: public mobile help experience.
+- map.html: standalone Leaflet help map used by the desktop shell.
+- offline.html: service-worker fallback page.
+- app-proper.html: compatibility wrapper that normalizes saint names in app.html.
 
-Recommended deployment
-- Host the public HTML on HTTPS using GitHub Pages, Netlify, Vercel, Sarvaha server, or NHM server.
-- Generate QR code for the public URL.
-- Keep the control room HTML for internal team only.
+Assets
+- assets/css/: page-specific styles.
+- assets/js/: page-specific browser logic.
+- wari-data.js: shared data normalization, filtering, icons, and formatting
+  helpers.
+- wari-points-*.js: generated route/help point datasets loaded by app.html and
+  map.html.
+- wari-route-dnyaneshwar-pune.js: Pune-region route line and missing waypoints
+  generated from the Sant Dnyaneshwar Maharaj Palakhi KMZ NetworkLink export.
+- sw.js: offline cache and stale-while-revalidate strategy.
 
-Important
-- GPS works reliably only on HTTPS or localhost.
-- Public version does not show unverified records.
-- Add water/toilet/food/helpdesk data later using same CSV format.
+Data/source exports
+- CSV, KML, GeoJSON, and XLSX files in the repository root are source/reference
+  exports for map data review and deployment.
+
+Maintenance notes
+- Keep this app dependency-free unless a build step is intentionally introduced.
+- When adding a new static asset required offline, add it to APP_SHELL in sw.js
+  and bump CACHE_VERSION.
+- GPS only works reliably on HTTPS or localhost.
+- Leaflet is loaded from unpkg and cached by the service worker after first load.
