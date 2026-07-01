@@ -10,27 +10,35 @@
 <body>
   <div id="map"></div>
   <div class="topbar">
-    <div class="panel">
-      <div class="title">वारी सहाय्य · मदत नकाशा</div>
-      <div class="sub"><span id="count">0</span> मदत केंद्रे · <span id="locStatus">GPS सुरू नाही</span></div>
-      <div class="filter-title">नकाशा नियंत्रण</div>
-      <div class="chips"><button class="chip loc-chip" onclick="locateMe()">📍 माझे स्थान दाखवा</button><button class="chip" onclick="resetMap(false)">🗺 सर्व points</button></div>
-      <div class="filter-title">पालखी</div>
-      <div class="chips" id="palkhiChips">
-        <button class="chip active" data-palkhi="all">दोन्ही पालख्या</button>
-        <button class="chip" data-palkhi="dnyaneshwar">श्री संत ज्ञानेश्वर महाराज</button>
-        <button class="chip" data-palkhi="tukaram">जगद्गुरू श्री संत तुकाराम महाराज</button>
+    <div class="panel collapsed" id="panel">
+      <div class="phead">
+        <div class="pinfo">
+          <div class="title">वारी सहाय्य · मदत नकाशा</div>
+          <div class="sub"><span id="count">0</span> मदत केंद्रे · <span id="locStatus">GPS सुरू नाही</span></div>
+        </div>
+        <button class="ptoggle" id="ptoggle" onclick="togglePanel()" aria-expanded="false">नियंत्रण ▾</button>
       </div>
-      <div class="filter-title">मदत प्रकार</div>
-      <div class="chips" id="typeChips">
-        <button class="chip active" data-filter="all">सर्व</button>
-        <button class="chip" data-filter="ambulance">🚑 रुग्णवाहिका</button>
-        <button class="chip" data-filter="health">🏥 आरोग्य</button>
-        <button class="chip" data-filter="halt">⛺ मुक्काम</button>
-        <button class="chip" data-filter="satara">Satara</button>
+      <div class="panel-body" id="panelBody">
+        <div class="filter-title">नकाशा नियंत्रण</div>
+        <div class="chips"><button class="chip loc-chip" onclick="locateMe()">📍 माझे स्थान दाखवा</button><button class="chip" onclick="resetMap(false)">🗺 सर्व points</button></div>
+        <div class="filter-title">पालखी</div>
+        <div class="chips" id="palkhiChips">
+          <button class="chip active" data-palkhi="all">दोन्ही पालख्या</button>
+          <button class="chip" data-palkhi="dnyaneshwar">श्री संत ज्ञानेश्वर महाराज</button>
+          <button class="chip" data-palkhi="tukaram">जगद्गुरू श्री संत तुकाराम महाराज</button>
+        </div>
+        <div class="filter-title">मदत प्रकार</div>
+        <div class="chips" id="typeChips">
+          <button class="chip active" data-filter="all">सर्व</button>
+          <button class="chip" data-filter="ambulance">🚑 रुग्णवाहिका</button>
+          <button class="chip" data-filter="health">🏥 आरोग्य</button>
+          <button class="chip" data-filter="halt">⛺ मुक्काम</button>
+          <button class="chip" data-filter="hirkani">🤱 हिरकणी कक्ष</button>
+          <button class="chip" data-filter="satara">सातारा</button>
+        </div>
       </div>
     </div>
-    <div class="legend"><span>🚑 रुग्णवाहिका</span><span>🩺 डॉक्टर/PHC</span><span>🏥 रुग्णालय</span><span>⛺ मुक्काम</span><span>🟧 ज्ञानेश्वर पुणे मार्ग</span><span>📍 माझे स्थान</span></div>
+    <div class="legend"><span>🚑 रुग्णवाहिका</span><span>🩺 डॉक्टर/PHC</span><span>🏥 रुग्णालय</span><span>⛺ मुक्काम</span><span>🤱 हिरकणी कक्ष</span><span>🟧 ज्ञानेश्वर पुणे मार्ग</span><span>📍 माझे स्थान</span></div>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="./wari-points-1.js"></script>
