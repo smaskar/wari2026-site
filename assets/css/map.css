@@ -16,3 +16,5 @@
 .legend-btn{background:#fff8e8;border:1px solid #ead8bc;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:950;box-shadow:0 10px 20px #0001;cursor:pointer;color:#4b3b2b}
 .legend-btn.active{background:#23160d;color:#fff;border-color:#23160d}
 .legend-btn.loc-btn{background:#fff3e5;color:#a44900;border-color:#ffd8a8}
+.pin.has-live{position:relative}
+.pin.has-live::after{content:"";position:absolute;top:-1px;right:-1px;width:9px;height:9px;border-radius:50%;background:#e50914;border:2px solid #fff}
